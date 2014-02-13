@@ -1,7 +1,7 @@
 // 本地化命名空间
 var utils = AppView.utils, 
 	controllers = AppView.controllers,
-	baseUrl = 'http://218.65.83.85:8167/mobile/';
+	baseUrl = 'http://218.65.83.85:8167/huirenApp2/';
 	
 toastr.options = {
 	"closeButton": true,
@@ -12,6 +12,22 @@ toastr.options = {
 };
 
 // 控制器业务处理中心
+
+controllers.page_loading = {
+
+    pagecreate : function(event){
+		//utils.checkLogin('orders.html');
+		var autoLogin = AppView.utils.getStorageParam('infoAutoLogin');
+		var username = AppView.utils.getStorageParam('infoUsername');
+		var password = AppView.utils.getStorageParam('infoPassword');
+		if(autoLogin || username) {
+			$.mobile.changePage('orders.html', { transition: "slidefade", changeHash: true});
+		} else {
+			$.mobile.changePage("login.html", { transition: "slidefade", changeHash: true });
+		}
+    }
+}
+
 controllers.btn_login = {
     click : function(event){
 		var username = $("#text_username").val(),
@@ -29,7 +45,7 @@ controllers.btn_login = {
 				textonly: !!$this.jqmData( "textonly" ),
 				html: $this.jqmData( "html" ) || ""
 			});
-			$.getJSON(baseUrl + "login?&callbak=?", {"username": username, "password": password}, function(json){
+			$.getJSON(baseUrl + "user!login?&callbak=?", {"username": username, "password": password}, function(json){
 				$.mobile.loading( "hide" );
 				var stateCode = json.stateCode;
 				if (stateCode == 0){
@@ -37,7 +53,7 @@ controllers.btn_login = {
 				} else {
 				  toastr.success("登录成功！");
 				  var user = json.content;
-				  utils.setStorageParam('infoUserId', user.iD);
+				  utils.setStorageParam('infoUserId', user.ID);
 				  utils.setStorageParam('infoRoleCode', user.roleCode);
 				  utils.setStorageParam('infoUsername', user.username);
 				  utils.setStorageParam('infoPassword', password);
@@ -45,8 +61,9 @@ controllers.btn_login = {
 				  utils.setStorageParam('infoEmail', user.mobile);
 				  utils.setStorageParam('infoRealName', user.realName);
 				  if (autoLogin == 'On') {
-					  utils.setStorageParam('infoAutoLogin', autoLogin);
+					  utils.setStorageParam('infoAutoLogin', true);
 				  }
+				  $.mobile.changePage( "orders.html", { transition: "turn", changeHash: true });
 				}
 			});
 			/**
@@ -74,7 +91,7 @@ function bulidClientsListView(liArray, clients) {
 		if (client.isRegist) {
 			li = '<li>' + client.realName + '<span style="padding-left:5px; font-size:12px; font-weight:500"><i class="fa fa-phone"></i>' + client.mobile + '<br/>编号：'+ client.code +'</span><p class="ui-li-aside"><br/><strong>已注册</strong></p></li>';
 		} else {
-			li = '<li><a>' + client.realName + '<span style="padding-left:5px; font-size:12px; font-weight:500"><i class="fa fa-phone"></i>' + client.mobile + '<br/>编号：'+ client.code +'</span></a><a href="#page_client_regist" data-transition="flow" data-clientId="' + client.iD + '" data-clientCode="' + client.code + '" data-clientRealName="' + client.realName + '" data-clientMobile="' + client.mobile + '"></a></li>';
+			li = '<li><a>' + client.realName + '<span style="padding-left:5px; font-size:12px; font-weight:500"><i class="fa fa-phone"></i>' + client.mobile + '<br/>编号：'+ client.code +'</span></a><a href="#page_client_regist" data-transition="flow" data-clientId="' + client.ID + '" data-clientCode="' + client.code + '" data-clientRealName="' + client.realName + '" data-clientMobile="' + client.mobile + '"></a></li>';
 		}
     	liArray.push(liValue);
     });
@@ -206,7 +223,7 @@ function bulidOrdersListView(liArray, orders) {
 	$.each(orders, function ( i, order ) {
 		var liValue;
 		li = '<li><a href="#page_order_detail"'
-			+' data-orderId='+ order.iD
+			+' data-orderId='+ order.ID
 			+' data-orderCode='+ order.code
 			+' data-orderCreateTime='+ order.createTime
 			+' data-orderType='+ order.type
@@ -390,6 +407,7 @@ controllers.page_order_location = {
 }
 
 var pages = [
+	{id:'page_loading', event:'pagecreate'},
 	{id:'btn_login', event:'click'},
 	{id:'page_clients', event:'pagebeforecreate,pageshow'},
 	{id:'page_client_regist', event:'pageshow'},

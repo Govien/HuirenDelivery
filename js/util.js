@@ -7,6 +7,16 @@ var AppView = {
 }
 
 AppView.utils = {
+	checkLogin : function(page) {
+		var autoLogin = AppView.utils.getStorageParam('infoAutoLogin');
+		var username = AppView.utils.getStorageParam('infoUsername');
+		var password = AppView.utils.getStorageParam('infoPassword');
+		if(autoLogin || username) {
+			$.mobile.changePage(page, { transition: "slidefade", changeHash: true});
+		} else {
+			$.mobile.changePage("login.html", { transition: "slidefade", changeHash: true });
+		}
+	},
 	setParam : function (name,value) {
 	    //ios上需要先remove
 	    sessionStorage.removeItem(name);
