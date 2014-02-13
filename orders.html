@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>汇仁物流-订单</title>
+<!--<link href="lib/jquery/jquery.mobile-1.4.0.min.css" rel="stylesheet" type="text/css">
+<link href="lib/toastr/toastr.min.css" rel="stylesheet" type="text/css">
+<link href="lib/font-awesome/css.css" rel="stylesheet" type="text/css">
+<link href="lib/xtable/xtab.css" rel="stylesheet" type="text/css" />
+<script src="lib/jquery/jquery-1.10.2.min.js"></script>
+<script src="lib/jquery/jquery.mobile-1.4.0.min.js"></script>
+<script src="lib/toastr/toastr.min.js"></script>
+<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=bvTfdBKp8KdpLHYeCO9SGySb"></script>
+<style type="text/css">
+    #page_order_location,#div_order_location {width:100%; height:100%; overflow:hidden; margin:0; padding:0;}
+</style>-->
+</head>
+<body>
+    <div data-role="page" id="page_orders">
+        <div data-role="header" data-position="fixed">
+            <h1>我的订单</h1>
+        </div>
+        <div role="main" class="ui-content">
+            <ul data-role="listview" data-filter="true" data-filter-placeholder="请输入过滤条件..." data-inset="true">
+            	<li data-role="list-divider">订单列表<span class="ui-li-count">10</span></li>
+                <li><a href="orderDetail.html"><br/>好长真的好长好物料名称
+                        <p>订单编号：20140101121212</p>
+                        <p>订单金额：￥178.50</p>
+                        <span class="ui-li-count">拣货中</span>
+                        <p class="ui-li-aside">2014/01/01 12:12:12</p>
+                    </a>
+                </li>
+                <li><a href="#page_order_detail"><br/>好长真的好长好物料名称
+                        <p>订单编号：20140101121212</p>
+                        <p>订单金额：￥178.50</p>
+                        <span class="ui-li-count">拣货中</span>
+                        <p class="ui-li-aside">2014/01/01 12:12:12</p>
+                    </a>
+                </li>
+                <li><a href="#page_order_detail"><br/>好长真的好长好料名称
+                        <p>订单编号：20140101121212</p>
+                        <p>订单金额：￥178.50</p>
+                        <span class="ui-li-count">拣货中</span>
+                        <p class="ui-li-aside">2014/01/01 12:12:12</p>
+                    </a>
+                </li>
+                <li><a href="#page_order_detail"><br/>好长真的好长好物料名称
+                        <p>订单编号：20140101121212</p>
+                        <p>订单金额：￥178.50</p>
+                        <span class="ui-li-count">拣货中</span>
+                        <p class="ui-li-aside">2014/01/01 12:12:12</p>
+                    </a>
+                </li>
+                <li><a href="#page_order_detail"><br/>好长真的好长好物料名称
+                        <p>订单编号：20140101121212</p>
+                        <p>订单金额：￥178.50</p>
+                        <span class="ui-li-count">拣货中</span>
+                        <p class="ui-li-aside">2014/01/01 12:12:12</p>
+                    </a>
+                </li>
+            </ul>
+            <div id="orders_page_count"></div>
+        </div>
+        <div data-role="footer" data-position="fixed">
+        	<div data-role="navbar">
+                <ul>
+                    <li><a href="#" data-icon="grid" class="ui-btn-active ui-state-persist">订单</a></li>
+                    <li><a href="clients.html" data-transition="slidefade" data-icon="star">客户</a></li>
+                    <li><a href="#" data-icon="gear">信息</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>汇仁物流-订单详情</title>
+
+<!--<link href="lib/jquery/jquery.mobile-1.4.0.min.css" rel="stylesheet" type="text/css">
+<link href="lib/toastr/toastr.min.css" rel="stylesheet" type="text/css">
+<link href="lib/font-awesome/css.css" rel="stylesheet" type="text/css">
+<link href="lib/xtable/xtab.css" rel="stylesheet" type="text/css" />
+<script src="lib/jquery/jquery-1.10.2.min.js"></script>
+<script src="lib/jquery/jquery.mobile-1.4.0.min.js"></script>
+<script src="lib/toastr/toastr.min.js"></script>
+<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=bvTfdBKp8KdpLHYeCO9SGySb"></script>
+<style type="text/css">
+    #page_order_location,#div_order_location {width:100%; height:100%; overflow:hidden; margin:0; padding:0;}
+</style>-->
+
+</head>  
+<body>
+    <div data-role="page" id="page_order_detail">
+        <div data-role="header" data-position="fixed">
+            <a class="ui-btn ui-shadow ui-corner-all ui-icon-carat-l ui-btn-icon-notext ui-btn-inline" data-rel="back">订单列表</a>
+            <h1>订单详情</h1>
+            <a href="orderLocation.html" class="ui-btn ui-shadow ui-corner-all ui-icon-location ui-btn-inline">GPS位置</a>
+        </div>
+        <div role="main" class="ui-content">
+            <table id="mytable"  cellspacing="0" summary="The technical specifications of the Apple PowerMac G5 series">
+    <caption>订单详情数据</caption>
+              <tr>
+                <th width="20%">名称</th>
+                <th width="30%">值</th>
+                <th width="20%">名称</th>
+                <th width="30%">值</th>
+              </tr>
+              <tr>
+                <th class="spec">单据编号</th>
+                <td id="td_order_code">900</td>
+                <th class="spec">订单类型</th>
+                <td id="td_order_type">5111</td>
+              </tr>
+              <tr>
+                <th class="spec">开票状态</th>
+                <td id="td_order_ticketStatus">5111</td>
+                <th class="spec">订单状态</th>
+                <td id="td_order_status">5111</td>
+              </tr>
+              <tr>
+                <th class="spec">配送方式</th>
+                <td id="td_order_deliverWay" colspan="3">900</td>
+              </tr>
+              <tr>
+                <th class="blank"></th>
+                <td class="blank" colspan="3"></td>
+              </tr>
+              <tr>
+                <th class="specalt">发票号</th>
+                <td id="td_order_ticketNo" class="alt">900</td>
+                <th class="specalt">网单号</th>
+                <td id="td_order_agencyNo" class="alt">5111</td>
+              </tr>
+              <tr>
+                <th class="specalt">失效日期</th>
+                <td id="td_order_invalidate" class="alt" colspan="3">900</td>
+              </tr>
+              <tr>
+                <th class="blank"></th>
+                <td class="blank" colspan="3"></td>
+              </tr>
+              <tr>
+                <th class="specalt">物料名称</th>
+                <td id="td_order_materialName" class="alt" colspan="3">5111</td>
+              </tr>
+              <tr>
+                <th class="specalt">产地</th>
+                <td id="td_order_origin" class="alt" colspan="3">5111</td>
+              </tr>
+              <tr>
+                <th class="specalt">数量</th>
+                <td id="td_order_count" class="alt">115</td>
+                <th class="specalt">批号</th>
+                <td id="td_order_batchNo" class="alt">900</td>
+              </tr>
+              <tr>
+                <th class="specalt">单价</th>
+                <td id="td_order_price" class="alt">900元/盒</td>
+                <th class="specalt">总金额</th>
+                <td id="td_order_sum" class="alt">5111元</td>
+              </tr>
+              <tr>
+                <th class="specalt">规格型号</th>
+                <td id="td_order_normsType" class="alt" colspan="3">900</td>
+              </tr>
+            </table>
+        </div>
+    </div>
+</body>
