@@ -22,9 +22,56 @@
         }
 
         </script>
-    </head>
-    <body onload="onBodyLoad()">
-    <h1>Hey, it's PhoneGap!</h1>
-    </body>
+    
+<link href="lib/jquery/jquery.mobile-1.4.0.min.css" rel="stylesheet" type="text/css">
+<link href="lib/toastr/toastr.min.css" rel="stylesheet" type="text/css">
+<link href="lib/font-awesome/css.css" rel="stylesheet" type="text/css">
+<link href="lib/xtable/xtab.css" rel="stylesheet" type="text/css" />
+<script src="lib/jquery/jquery-1.10.2.min.js"></script>
+<script src="lib/jquery/jquery.mobile-1.4.0.min.js"></script>
+<script src="lib/toastr/toastr.min.js"></script>
+<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=bvTfdBKp8KdpLHYeCO9SGySb"></script>
+<style type="text/css">
+    #page_order_location,#div_order_location {width:100%; height:100%; overflow:hidden; margin:0; padding:0;}
+</style>
+<script>
+$(document).bind("mobileinit", function(){
+	$.mobile.allowCrossDomainPages = true;
+	$.mobile.defaultTransition = "slidedown";
+	$.mobile.ajaxLinksEnabled = false; // 禁用Ajax提交
+	$.mobile.ajaxFormsEnabled = false; // 禁用Ajax提交
+	$.mobile.ajaxEnabled = false; //禁用Ajax提交
+});
+</script>
+</head>
+
+<body>
+    <div data-role="page" id="page_login">
+        <div data-role="header">
+            <h1>汇仁物流</h1><strong></strong>
+        </div>
+        <div role="main" class="ui-content">
+            <form data-ajax="false" onSubmit="return false;">
+                <div data-role="fieldcontain">
+                    <label for="text_username">用户名</label>
+                    <input type="text" id="text_username" name="username" data-clear-btn="true" placeholder="请输入用户名...">
+                </div>
+                <div data-role="fieldcontain">
+                    <label for="text_password">密码</label>
+                    <input type="password" id="text_password" name="password" data-clear-btn="true" autocomplete="off" placeholder="请输入密码...">
+                </div>
+                <div class="ui-field-contain">
+                    <label for="cbox_autoLogin">自动登录:</label>
+                    <input type="checkbox" id="cbox_autoLogin" name="cbox_autoLogin" data-role="flipswitch" checked>
+                </div>
+                <input id="btn_login" type="submit" data-textvisible="true" data-msgtext="正在登录..." value="登录">
+            </form>
+        </div>
+    </div>
+    <script src="js/util.js"></script>
+	<script src="js/app.js"></script>
+</body>
+
+</html>
 </html>
 
