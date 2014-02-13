@@ -4,7 +4,7 @@
     id        = "com.goven.HuirenDelivery"
     version   = "1.0.0">
 
-<name>汇仁医药物流</name>
+<name>汇仁物流</name>
 
 <description>
 汇仁医药物流
@@ -13,5 +13,12 @@
 <author href="https://example.com" email="you@example.com">
 Goven
 </author>
+
+<content src="loading.html" />
+<access origin="*" />
+<preference name="Fullscreen" value="true" />
+<preference name="WebViewBounce" value="true" />
+
+<icon src="img/icon.png" />
 
 </widget>

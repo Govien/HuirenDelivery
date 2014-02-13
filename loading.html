@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>汇仁物流-用户登录</title>
+<!--<link href="lib/jquery/jquery.mobile-1.4.0.min.css" rel="stylesheet" type="text/css">
+<link href="lib/toastr/toastr.min.css" rel="stylesheet" type="text/css">
+<script src="lib/jquery/jquery-1.10.2.min.js"></script>
+<script src="lib/jquery/jquery.mobile-1.4.0.min.js"></script>
+<script src="lib/toastr/toastr.min.js"></script>-->
+
+<script type="text/javascript" charset="utf-8" src="cordova.js"></script>
+<script type="text/javascript">
+	function onBodyLoad()
+	{       
+		document.addEventListener("deviceready", onDeviceReady, false);
+	}
+	
+	function onDeviceReady()
+	{
+		// do your thing!
+		navigator.notification.alert("PhoneGap is working")
+	}
+</script>
+
+<link href="lib/jquery/jquery.mobile-1.4.0.min.css" rel="stylesheet" type="text/css">
+<link href="lib/toastr/toastr.min.css" rel="stylesheet" type="text/css">
+<link href="lib/font-awesome/css.css" rel="stylesheet" type="text/css">
+<link href="lib/xtable/xtab.css" rel="stylesheet" type="text/css" />
+<script src="lib/jquery/jquery-1.10.2.min.js"></script>
+<script src="lib/jquery/jquery.mobile-1.4.0.min.js"></script>
+<script src="lib/toastr/toastr.min.js"></script>
+<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=bvTfdBKp8KdpLHYeCO9SGySb"></script>
+<style type="text/css">
+    #page_order_location,#div_order_location {width:100%; height:100%; overflow:hidden; margin:0; padding:0;}
+</style>
+<script>
+$(document).bind("mobileinit", function(){
+	$.mobile.allowCrossDomainPages = true;
+	$.mobile.defaultTransition = "slidedown";
+	$.mobile.ajaxLinksEnabled = false; // 禁用Ajax提交
+	$.mobile.ajaxFormsEnabled = false; // 禁用Ajax提交
+	$.mobile.ajaxEnabled = false; //禁用Ajax提交
+});
+</script>
+</head>  
+<body>
+    <div data-role="page" id="page_login">
+        
+    </div>
+    <script src="js/util.js"></script>
+	<script src="js/app.js"></script>
+</body>
+
+</html>
