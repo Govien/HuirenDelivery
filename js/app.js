@@ -101,7 +101,7 @@ controllers.btn_login = {
 function bulidClientsListView(liArray, clients) {
 	$.each(clients, function ( i, client ) {
 		var liValue;
-		if (!client.isRegist) {
+		if (client.isRegist) {
 			liValue = '<li>' + client.realName + '<span style="padding-left:5px; font-size:12px; font-weight:500">';
 			if (client.mobile) {
 				liValue = liValue + '<i class="fa fa-phone"></i>' + client.mobile;
@@ -459,10 +459,21 @@ controllers.page_order_location = {
 controllers.page_setting = {
 
     pagecreate : function(event){
+		var $pUser = $('#page_setting').find('p[id="p_user"]');
+		var $btnLogin = $('#page_setting').find('a[id="btn_setting_login"]');
+		var useId = utils.getStorageParam('infoUserId');
+		var realName = utils.getStorageParam('infoRealName');
+		if (useId) {
+			$pUser.text(realName + ',您好！');
+			$btnLogin.text('注销');
+		} else {
+			$pUser.text('您当前未登录，请先登录！');
+			$btnLogin.text('登录');
+		}
 		var $listview = $('#page_setting').find('ul[data-role="listview"]');
 		//防止重复绑定
 		$listview.undelegate();
-		$listview.delegate('#btn_setting_logout', 'click', function(e){
+		$listview.delegate('#btn_setting_login', 'click', function(e){
 			utils.removeStorageParam('infoUserId');
 			utils.removeStorageParam('infoRoleCode');
 			utils.removeStorageParam('infoUsername');
