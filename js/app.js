@@ -13,39 +13,24 @@ toastr.options = {
 
 // 控制器业务处理中心
 
-controllers.page_loading = {
+controllers.page_login = {
 
     pagecreate : function(event){
 		//utils.checkLogin('orders.html');
 		var autoLogin = AppView.utils.getStorageParam('infoAutoLogin');
 		var username = AppView.utils.getStorageParam('infoUsername');
 		var password = AppView.utils.getStorageParam('infoPassword');
-		if(autoLogin || username) {
-			$.mobile.changePage('orders.html', { transition: "slidefade", changeHash: true});
-		} else {
-			$.mobile.changePage("login.html", { transition: "slidefade", changeHash: true });
-		}
-    }
-}
-
-controllers.btn_login = {
-    click : function(event){
-		var username = $("#text_username").val(),
-		    password = $("#text_password").val(),
-		    autoLogin = $("#cbox_autoLogin").val();
-		if (!username || !password) {
-			$.mobile.changePage( "orders.html", { transition: "turn", changeHash: true });
-			//toastr.error("用户名或者密码不能为空！");
-		} else {
-			var $this = $( this );
+		if(autoLogin && username) {
+			$("#text_username").val(username),
+		    $("#text_password").val(password),
 			$.mobile.loading( "show", {
-				text: $this.jqmData( "msgtext" ) || $.mobile.loader.prototype.options.text,
-				textVisible: $this.jqmData( "textvisible" ) || $.mobile.loader.prototype.options.textVisible,
+				text: '正在自动登录...',
+				textVisible: true,
 				theme: "b",
-				textonly: !!$this.jqmData( "textonly" ),
-				html: $this.jqmData( "html" ) || ""
+				textonly: false,
+				html: ""
 			});
-			$.getJSON(baseUrl + "user!login?&callbak=?", {"username": username, "password": password}, function(json){
+			$.getJSON(baseUrl + "user!login?&callback=?", {"username": username, "password": password}, function(json){
 				$.mobile.loading( "hide" );
 				var stateCode = json.stateCode;
 				if (stateCode == 0){
@@ -60,26 +45,54 @@ controllers.btn_login = {
 				  utils.setStorageParam('infoMobile', user.mobile);
 				  utils.setStorageParam('infoEmail', user.mobile);
 				  utils.setStorageParam('infoRealName', user.realName);
-				  if (autoLogin == 'On') {
+				  if (autoLogin == 'on') {
 					  utils.setStorageParam('infoAutoLogin', true);
 				  }
 				  $.mobile.changePage( "orders.html", { transition: "turn", changeHash: true });
 				}
 			});
-			/**
-			$.ajax({
-				url: '/api/mobile/login',
-				data: requestJson,
-				type: "post",
-				dataType: "json",
-				contentType: "application/json; charset=utf8",
-				success: function (data) {
-					jQuery.each(data, function (i, val) {
-						$("#result").append(val.Title + '： ' + val.Uri +'<br/>');
-					});
+		}
+    }
+}
+
+controllers.btn_login = {
+    click : function(event){
+		var username = $("#text_username").val(),
+		    password = $("#text_password").val(),
+		    autoLogin = $("#cbox_autoLogin").val();
+		if (!username || !password) {
+			//$.mobile.changePage( "orders.html", { transition: "turn", changeHash: true });
+			toastr.error("用户名或者密码不能为空！");
+		} else {
+			var $this = $( this );
+			$.mobile.loading( "show", {
+				text: $this.jqmData( "msgtext" ) || $.mobile.loader.prototype.options.text,
+				textVisible: $this.jqmData( "textvisible" ) || $.mobile.loader.prototype.options.textVisible,
+				theme: "b",
+				textonly: !!$this.jqmData( "textonly" ),
+				html: ""
+			});
+			$.getJSON(baseUrl + "user!login?&callback=?", {"username": username, "password": password}, function(json){
+				$.mobile.loading( "hide" );
+				var stateCode = json.stateCode;
+				if (stateCode == 0){
+				  toastr.error("登录失败，" + json.message);
+				} else {
+				  toastr.success("登录成功！");
+				  var user = json.content;
+				  utils.setStorageParam('infoUserId', user.ID);
+				  utils.setStorageParam('infoRoleCode', user.roleCode);
+				  utils.setStorageParam('infoUsername', user.username);
+				  utils.setStorageParam('infoPassword', password);
+				  utils.setStorageParam('infoMobile', user.mobile);
+				  utils.setStorageParam('infoEmail', user.mobile);
+				  utils.setStorageParam('infoRealName', user.realName);
+				  if (autoLogin == 'on') {
+					  utils.setStorageParam('infoAutoLogin', true);
+				  }
+				  $.mobile.changePage( "orders.html", { transition: "turn", changeHash: true });
 				}
 			});
-			**/
 		}        
     }
 }
@@ -88,10 +101,18 @@ controllers.btn_login = {
 function bulidClientsListView(liArray, clients) {
 	$.each(clients, function ( i, client ) {
 		var liValue;
-		if (client.isRegist) {
-			li = '<li>' + client.realName + '<span style="padding-left:5px; font-size:12px; font-weight:500"><i class="fa fa-phone"></i>' + client.mobile + '<br/>编号：'+ client.code +'</span><p class="ui-li-aside"><br/><strong>已注册</strong></p></li>';
+		if (!client.isRegist) {
+			liValue = '<li>' + client.realName + '<span style="padding-left:5px; font-size:12px; font-weight:500">';
+			if (client.mobile) {
+				liValue = liValue + '<i class="fa fa-phone"></i>' + client.mobile;
+			}
+			liValue = liValue + '<br/>编号：'+ client.code +'</span><p class="ui-li-aside"><br/><strong>已注册</strong></p></li>';
 		} else {
-			li = '<li><a>' + client.realName + '<span style="padding-left:5px; font-size:12px; font-weight:500"><i class="fa fa-phone"></i>' + client.mobile + '<br/>编号：'+ client.code +'</span></a><a href="#page_client_regist" data-transition="flow" data-clientId="' + client.ID + '" data-clientCode="' + client.code + '" data-clientRealName="' + client.realName + '" data-clientMobile="' + client.mobile + '"></a></li>';
+			liValue = '<li><a href="#">' + client.realName + '<span style="padding-left:5px; font-size:12px; font-weight:500">';
+			if (client.mobile) {
+				liValue = liValue + '<i class="fa fa-phone"></i>' + client.mobile;
+			}
+			liValue = liValue + '<br/>编号：'+ client.code +'</span></a><a href="clientRegist.html" data-transition="flow" data-clientId="' + client.ID + '" data-clientCode="' + client.code + '" data-clientRealName="' + client.realName + '" data-clientMobile="' + client.mobile + '"></a></li>';
 		}
     	liArray.push(liValue);
     });
@@ -115,55 +136,64 @@ controllers.page_clients = {
     },
     
     pageshow : function(event){     
-			var clients_curr_page_no = utils.getParam('clients_curr_page_no');
-			var clients_total_page_num = utils.getParam('clients_total_page_num');
-			$.mobile.loading( "show", {
-				text: '正在加载客户列表',
-				textVisible: true,
-				theme: "b",
-				textonly: false,
-				html: $this.jqmData( "html" ) || ""
-			});
-			$.getJSON(baseUrl + '/getClients?&callback=?', {userId:utils.getStorageParam('infoUserId'), pageIndex:clients_curr_page_no, pageSize:10}, function(data) {
-				$.mobile.loading( "hide" );
-				var liArray = ['<li data-role="list-divider">客户列表</li>'];
-				var stateCode = data.stateCode;
-				if (data.stateCode == 0) {
-				  toastr.error(data.message);
+		var clients_curr_page_no = parseInt(utils.getParam('clients_curr_page_no'));
+		var clients_total_page_num = parseInt(utils.getParam('clients_total_page_num'));
+		$.mobile.loading( "show", {
+			text: '正在加载客户列表',
+			textVisible: true,
+			theme: "b",
+			textonly: false,
+			html: ""
+		});
+		$.getJSON(baseUrl + 'customer!getClients?&callback=?', {userId:utils.getStorageParam('infoUserId'), pageIndex:clients_curr_page_no, pageSize:10}, function(data) {
+			$.mobile.loading( "hide" );
+			var liArray = ['<li data-role="list-divider">客户列表</li>'];
+			var stateCode = data.stateCode;
+			if (data.stateCode == 0) {
+			  toastr.error(data.message);
+			} else {
+				if (data.message) {
+					var size = parseInt(data.message);
+					clients_total_page_num = size%10 == 0 ? size/10 : (size/10 + 1);
 				} else {
-				  clients_total_page_num = parseInt(data.message);
-				  utils.setParam('clients_total_page_num', clients_total_page_num);
-				  bulidClientsListView(liArray, data.content);
+					clients_total_page_num = 1;
 				}
-				var $listview = $('#page_clients').find('ul[data-role="listview"]');
-				$listview.html(liArray.join(''));
-				$listview.listview('refresh')
-				$listview.undelegate();
-				$listview.delegate('li a', 'click', function(e) {
-				  utils.setParam('clientId', $(this).jqmData("clientId"));
-				  utils.setParam('clientCode', $(this).jqmData("clientCode"));
-				  utils.setParam('clientRealName', $(this).jqmData("clientRealName"));
-				  utils.setParam('clientMobile', $(this).jqmData("clientMobile"));
-				});
-			});       
-			//下面为了避免重新刷新，写的代码很丑
+				utils.setParam('clients_total_page_num', clients_total_page_num);
+				if (data.content && data.content.length > 0) {
+					bulidClientsListView(liArray, data.content);
+				} else {
+					toastr.info("暂无数据！");
+					liArray.push('<li>暂无客户数据！</li>');
+				}
+			}
+			var $listview = $('#page_clients').find('ul[data-role="listview"]');
+			$listview.html(liArray.join(''));
+			$listview.listview('refresh')
+			$listview.undelegate();
+			$listview.delegate('li a', 'click', function(e) {
+			  utils.setParam('clientId', $(this).jqmData("clientid"));
+			  utils.setParam('clientCode', $(this).jqmData("clientcode"));
+			  utils.setParam('clientRealName', $(this).jqmData("clientrealname"));
+			  utils.setParam('clientMobile', $(this).jqmData("clientmobile"));
+			});
+			initPaging();
+		}); 
+		
+		function initPaging() {
 			$('#clients_page_count').html('')
 			if(clients_curr_page_no > 1){
-				//上一页
-				$('#clients_page_count').append('<a data-inline="true" data-corners="true" data-action_page_no="' + (clients_page_count - 1).toString() + 
-											'" data-role="button" href="#page_clients" data-shadow="true" data-iconshadow="true" data-wrapperels="span" ' + 
-											'data-theme="c" class="ui-btn ui-btn-inline ui-shadow ui-btn-corner-all ui-btn-up-c">' + 
-											'<span class="ui-btn-inner ui-btn-corner-all"><span class="ui-btn-text">上一页</span></span></a>');                    
+			//上一页
+				$('#clients_page_count').append('<a data-action_page_no="' + (clients_curr_page_no - 1).toString() + '" href="#page_clients" data-shadow="true" data-iconshadow="true" data-wrapperels="span" ' + 
+										'class="ui-btn ui-mini ui-btn-inline ui-btn-corner-all">' + 
+										'<span class="ui-btn-inner ui-btn-corner-all"><span class="ui-btn-text">上一页</span></span></a>');                    
 			}
 			if(clients_curr_page_no < clients_total_page_num){
 				//下一页
-				$('#clients_page_count').append('<a data-inline="true" data-corners="true" data-action_page_no="' + (clients_curr_page_no + 1).toString() + 
-											'" data-role="button" href="#page_clients" data-shadow="true" data-iconshadow="true" data-wrapperels="span" ' + 
-											'data-theme="c" class="ui-btn ui-btn-inline ui-shadow ui-btn-corner-all ui-btn-up-c">' + 
-											'<span class="ui-btn-inner ui-btn-corner-all"><span class="ui-btn-text">下一页</span></span></a>');    
-			} 
-			
-			$('#clients_page_count').append('&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<span>页数   ' + clients_curr_page_no.toString() + ' / ' + clients_total_page_num.toString() + '<span>');
+				$('#clients_page_count').append('<a data-action_page_no="' + (clients_curr_page_no + 1).toString() + '" href="#page_clients" data-shadow="true" data-iconshadow="true" data-wrapperels="span" ' + 
+											'class="ui-btn ui-mini ui-btn-inline ui-btn-corner-all">' + 
+											'<span class="ui-btn-inner ui-btn-corner-all"><span class="ui-btn-text">下一页</span></span></a>');   
+			}
+			$('#clients_page_count').append('&nbsp<span>页数   ' + clients_curr_page_no.toString() + ' / ' + clients_total_page_num.toString() + '<span>');
 			
 			var $pageView = $('#clients_page_count');
 			//防止重复绑定
@@ -174,7 +204,8 @@ controllers.page_clients = {
 				//$.mobile.changePage('index.html', {reloadPage: true},{ allowSamePageTranstion: true},{ transition: 'none'});
 				//局部刷新，提高速度
 				controllers.page_clients.pageshow();
-			});
+			});	
+		}
     }
 }
 
@@ -201,18 +232,17 @@ controllers.btn_client_regist = {
 				textVisible: true,
 				theme: "b",
 				textonly: false,
-				html: $this.jqmData( "html" ) || ""
+				html: ""
 			});
-			$.getJSON(baseUrl + "registClientAccount?&callbak=?", {"userId":utils.getStorageParam('infoUserId'),"clientId":utils.getParam('clientId'), "username": username, "password": password}, function(json){
+			$.getJSON(baseUrl + "customer!registClientAccount?&callback=?", {"userId":utils.getStorageParam('infoUserId'),"clientId":utils.getParam('clientId'), "username": username, "password": password}, function(json){
 				$.mobile.loading( "hide" );
 				var stateCode = json.stateCode;
 				if (stateCode == 0){
 				  toastr.error("注册失败，" + json.message);
 				} else {
 				  toastr.success("注册成功！");
-				  $.mobile.changePage( "clients.html");
+				  window.history.back();
 				}
-				window.history.back();
 			});
 		}
 	}
@@ -222,27 +252,20 @@ controllers.btn_client_regist = {
 function bulidOrdersListView(liArray, orders) {
 	$.each(orders, function ( i, order ) {
 		var liValue;
-		li = '<li><a href="#page_order_detail"'
-			+' data-orderId='+ order.ID
-			+' data-orderCode='+ order.code
-			+' data-orderCreateTime='+ order.createTime
-			+' data-orderType='+ order.type
-			+' data-orderCount='+ order.count
-			+' data-orderStatus='+ order.status
-			+' data-orderDeliverWay='+ order.deliverWay
-			+' data-orderTicketStatus='+ order.ticketStatus
-			+' data-orderTicketNo='+ order.ticketNo
-			+' data-orderAgencyNo='+ order.agencyNo
-			+' data-orderInvalidate='+ order.invalidate
-			+' data-orderMaterialName='+ order.materialName
-			+' data-orderMaterialUnit='+ order.materialUnit
-			+' data-orderOrigin='+ order.origin
-			+' data-orderNormsType='+ order.normsType
-			+' data-orderPrice='+ order.price
-			+' data-orderUnit='+ order.unit
-			+' data-orderSum='+ order.sum
-			+' data-orderBatchNo='+ order.batchNo
-			+'><br/>'+ order.materialName +'<p>订单编号：'+ order.code +'</p><p>订单金额：'+ order.sum + order.unit +'</p><span class="ui-li-count">'+ order.status +'</span><p class="ui-li-aside">'+ order.createTime +'</p></a></li>';
+		liValue = '<li><a href="orderDetail.html" data-transition="slidefade"'
+			+' data-orderCode="'+ order.code
+			+'" data-orderCreateTime="'+ order.createTime
+			+'" data-orderType="'+ order.type
+			+'" data-orderStatus="'+ order.status
+			+'" data-orderDeliverWay="'+ order.deliverWay
+			+'" data-orderTicketStatus="'+ order.ticketStatus
+			+'" data-orderTicketNo="'+ order.ticketNo
+			+'" data-orderAgencyNo="'+ order.FConsignNumber
+			+'" data-orderLongitude="'+ order.longitude
+			+'" data-orderLatitude="'+ order.latitude
+			+'" data-orderAddreess="'+ order.addreess
+			+'" data-orderUpdateTime="'+ order.updateTime
+			+'"><br/>'+ '订单编号：'+ order.code +'<p>订单类型：'+ order.type +'</p><span class="ui-li-count">'+ order.status +'</span><p class="ui-li-aside">'+ order.createTime +'</p></a></li>';
     	liArray.push(liValue);
     });
 }
@@ -265,82 +288,90 @@ controllers.page_orders = {
     },
     
     pageshow : function(event){
-		var orders_curr_page_no = utils.getParam('orders_curr_page_no');
-		var orders_total_page_num = utils.getParam('orders_total_page_num');
+		var orders_curr_page_no = parseInt(utils.getParam('orders_curr_page_no'));
+		var orders_total_page_num = parseInt(utils.getParam('orders_total_page_num'));
 		$.mobile.loading( "show", {
 			text: '正在获取订单',
 			textVisible: true,
 			theme: "b",
 			textonly: false,
-			html: $this.jqmData( "html" ) || ""
+			html: ""
 		});
-		$.getJSON(baseUrl + '/getOrdersOfUser?&callback=?', {userId:utils.getStorageParam('infoUserId'), pageIndex:orders_curr_page_no, pageSize:10}, function(data) {
+		$.getJSON(baseUrl + "saleOrder!getOrdersOfUser?&callback=?", {"userId":utils.getStorageParam('infoUserId'), "pageIndex":orders_curr_page_no, "pageSize":10}, function(data) {
 			$.mobile.loading( "hide" );
 			var liArray = ['<li data-role="list-divider">订单列表</li>'];
 			var stateCode = data.stateCode;
 			if (data.stateCode == 0) {
-			  toastr.error(data.message);
+				if (parseInt(data.message)) {
+					toastr.info(data.message);
+				} else {
+					toastr.info("暂无数据！");
+				}
 			} else {
-			  orders_total_page_num = parseInt(data.message);
-			  utils.setParam('orders_total_page_num', orders_total_page_num);
-			  bulidOrdersListView(liArray, data.content);
+				if (data.message) {
+					var size = parseInt(data.message);
+					orders_total_page_num = size%10 == 0 ? size/10 : (size/10 + 1);
+				} else {
+					orders_total_page_num = 1;
+				}
+				utils.setParam('orders_total_page_num', orders_total_page_num);
+				if (data.content && data.content.length > 0) {
+					bulidOrdersListView(liArray, data.content);
+				} else {
+					toastr.info("暂无数据！");
+					liArray.push('<li>暂无订单数据！</li>');
+				}
 			}
 			var $listview = $('#page_orders').find('ul[data-role="listview"]');
 			$listview.html(liArray.join(''));
-			$listview.listview('refresh')
+			$listview.listview('refresh');
 			$listview.undelegate();
 			$listview.delegate('li a', 'click', function(e) {
-			  utils.setParam('orderId', $(this).jqmData("orderId"));
-			  utils.setParam('orderCode', $(this).jqmData("orderCode"));
-			  utils.setParam('orderCreateTime', $(this).jqmData("orderCreateTime"));
-			  utils.setParam('orderType', $(this).jqmData("orderType"));
-			  utils.setParam('orderCount', $(this).jqmData("orderCount"));
-			  utils.setParam('orderStatus', $(this).jqmData("orderStatus"));
-			  utils.setParam('orderDeliverWay', $(this).jqmData("orderDeliverWay"));
-			  utils.setParam('orderTicketStatus', $(this).jqmData("orderTicketStatus"));
-			  utils.setParam('orderTicketNo', $(this).jqmData("orderTicketNo"));
-			  utils.setParam('orderAgencyNo', $(this).jqmData("orderAgencyNo"));
-			  utils.setParam('orderInvalidate', $(this).jqmData("orderInvalidate"));
-			  utils.setParam('orderMaterialName', $(this).jqmData("orderMaterialName"));
-			  utils.setParam('orderMaterialUnit', $(this).jqmData("orderMaterialUnit"));
-			  utils.setParam('orderOrigin', $(this).jqmData("orderOrigin"));
-			  utils.setParam('orderNormsType', $(this).jqmData("orderNormsType"));
-			  utils.setParam('orderPrice', $(this).jqmData("orderPrice"));
-			  utils.setParam('orderUnit', $(this).jqmData("orderUnit"));
-			  utils.setParam('orderSum', $(this).jqmData("orderSum"));
-			  utils.setParam('orderBatchNo', $(this).jqmData("orderBatchNo"));
+			  utils.setParam('orderCode', $(this).jqmData("ordercode"));
+			  utils.setParam('orderCreateTime', $(this).jqmData("ordercreatetime"));
+			  utils.setParam('orderType', $(this).jqmData("ordertype"));
+			  utils.setParam('orderStatus', $(this).jqmData("orderstatus"));
+			  utils.setParam('orderDeliverWay', $(this).jqmData("orderdeliverway"));
+			  utils.setParam('orderTicketStatus', $(this).jqmData("orderticketstatus"));
+			  utils.setParam('orderTicketNo', $(this).jqmData("orderticketno"));
+			  utils.setParam('orderAgencyNo', $(this).jqmData("orderagencyno"));
+			  utils.setParam('orderLongitude', $(this).jqmData("orderlongitude"));
+			  utils.setParam('orderLatitude', $(this).jqmData("orderlatitude"));
+			  utils.setParam('orderAddreess', $(this).jqmData("orderaddreess"));
+			  utils.setParam('orderUpdateTime', $(this).jqmData("orderupdatetime"));
 			});
+			initPaging();
 		});
-		     
-		//下面为了避免重新刷新，写的代码很丑
-		$('#orders_page_count').html('')
-		if(orders_curr_page_no > 1){
-			//上一页
-			$('#orders_page_count').append('<a data-inline="true" data-corners="true" data-action_page_no="' + (orders_page_count - 1).toString() + 
-										'" data-role="button" href="#page_orders" data-shadow="true" data-iconshadow="true" data-wrapperels="span" ' + 
-										'data-theme="c" class="ui-btn ui-btn-inline ui-shadow ui-btn-corner-all ui-btn-up-c">' + 
-										'<span class="ui-btn-inner ui-btn-corner-all"><span class="ui-btn-text">上一页</span></span></a>');                    
+		
+		// 分页
+		function initPaging() {
+			$('#orders_page_count').html('')
+			if(orders_curr_page_no > 1){
+				//上一页
+				$('#orders_page_count').append('<a data-action_page_no="' + (orders_curr_page_no - 1).toString() + '" href="#page_orders" data-shadow="true" data-iconshadow="true" data-wrapperels="span" ' + 
+											'class="ui-btn ui-mini ui-btn-inline ui-btn-corner-all">' + 
+											'<span class="ui-btn-inner ui-btn-corner-all"><span class="ui-btn-text">上一页</span></span></a>');                    
+			}
+			if(orders_curr_page_no < orders_total_page_num){
+				//下一页
+				$('#orders_page_count').append('<a data-action_page_no="' + (orders_curr_page_no + 1).toString() + '" href="#page_orders" data-shadow="true" data-iconshadow="true" data-wrapperels="span" ' + 
+											'class="ui-btn ui-mini ui-btn-inline ui-btn-corner-all">' + 
+											'<span class="ui-btn-inner ui-btn-corner-all"><span class="ui-btn-text">下一页</span></span></a>');   
+			}
+			
+			$('#orders_page_count').append('&nbsp&nbsp<span>页数   ' + orders_curr_page_no.toString() + ' / ' + orders_total_page_num.toString() + '<span>');
+			
+			var pageView = $('#orders_page_count');
+			//防止重复绑定
+			pageView.undelegate();
+			pageView.delegate('a', 'click', function(e){
+				var actionPageNo = parseInt($(this).jqmData('action_page_no'));
+				utils.setParam('orders_curr_page_no', actionPageNo);
+				//$.mobile.changePage('index.html', {reloadPage: true},{ allowSamePageTranstion: true},{ transition: 'none'});
+				//局部刷新，提高速度
+				controllers.page_orders.pageshow();
+			});
 		}
-		if(orders_curr_page_no < orders_total_page_num){
-			//下一页
-			$('#orders_page_count').append('<a data-inline="true" data-corners="true" data-action_page_no="' + (orders_curr_page_no + 1).toString() + 
-										'" data-role="button" href="#page_orders" data-shadow="true" data-iconshadow="true" data-wrapperels="span" ' + 
-										'data-theme="c" class="ui-btn ui-btn-inline ui-shadow ui-btn-corner-all ui-btn-up-c">' + 
-										'<span class="ui-btn-inner ui-btn-corner-all"><span class="ui-btn-text">下一页</span></span></a>');    
-		} 
-		
-		$('#orders_page_count').append('&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<span>页数   ' + orders_curr_page_no.toString() + ' / ' + orders_total_page_num.toString() + '<span>');
-		
-		var $pageView = $('#orders_page_count');
-		//防止重复绑定
-		$pageView.undelegate();
-		$pageView.delegate('a', 'click', function(e){
-			var actionPageNo = parseInt($(this).jqmData('action_page_no'));
-			utils.setParam('orders_curr_page_no', actionPageNo);
-			//$.mobile.changePage('index.html', {reloadPage: true},{ allowSamePageTranstion: true},{ transition: 'none'});
-			//局部刷新，提高速度
-			controllers.page_orders.pageshow();
-		});
     }
 }
 
@@ -354,66 +385,106 @@ controllers.page_order_detail = {
 		$("#td_order_deliverWay").text(utils.getParam('orderDeliverWay'));
 		$("#td_order_ticketNo").text(utils.getParam('orderTicketNo'));
 		$("#td_order_agencyNo").text(utils.getParam('orderAgencyNo'));
-		$("#td_order_invalidate").text(utils.getParam('orderInvalidate'));
-		$("#td_order_materialName").text(utils.getParam('orderMaterialName'));
-		$("#td_order_origin").text(utils.getParam('orderOrigin'));
-		$("#td_order_count").text(utils.getParam('orderCount'));
-		$("#td_order_batchNo").text(utils.getParam('orderBatchNo'));
-		$("#td_order_price").text(utils.getParam('orderPrice') + '/' + utils.getParam('orderUnit'));
-		$("#td_order_sum").text(utils.getParam('orderSum'));
-		$("#td_order_normsType").text(utils.getParam('orderNormsType'));
+		$("#td_order_createTime").text(utils.getParam('orderCreateTime'));
+		$("#td_order_addreess").text(utils.getParam('orderAddreess'));
+		$.mobile.loading( "show", {
+			text: '正在加载订单详情',
+			textVisible: true,
+			theme: "b",
+			textonly: false,
+			html: ""
+		});
+		$.getJSON(baseUrl + "saleOrder!getOrderDetail?&callback=?", {"orderCode":'02695273'}, function(data){
+			$.mobile.loading( "hide" );
+			var stateCode = data.stateCode;
+			if (stateCode == 0){
+				toastr.error("没有订单详情信息，" + data.message);
+			} else {
+				var liArray = [];
+				bulidOrderDetail(liArray, data.content);
+				$("table#table_order_detail").append(liArray.join(''));
+			}
+		});
     }
+}
+
+// 构建订单列表模板
+function bulidOrderDetail(liArray, products) {
+	$.each(products, function (i, product) {
+		var liValue;
+		liValue= '<tr><th class="specalt">物料名称</th><td id="td_product_materialName" class="alt" colspan="3">' + product.materialName + '</td></tr>'
+				+'<tr><th class="spec">物料单位</th><td id="td_product_materialUnit">' + product.materialUnit + '</td><th class="spec">产地</th><td id="td_product_origin">' + product.origin + '</td></tr>'
+				+'<tr><th class="spec">失效日期</th><td id="td_product_invalidate" colspan="3">' + product.invalidate + '</td></tr>'
+				+'<tr><th class="spec">规格型号</th><td id="td_product_normsType" colspan="3">' + product.normsType + '</td></tr>'
+				+'<tr><th class="spec">单价</th><td id="td_product_price">' + product.price + '/' + product.unit + '</td><th class="spec">数量</th><td id="td_product_count">' + product.count + '</td></tr>'
+				+'<tr><th class="spec">总金额</th><td id="td_product_sum">' + product.sum + '</td><th class="spec">批号</th><td id="td_product_batchNo">' + product.batchNo + '</td></tr>' + '<tr><th class="blank"></th><td class="blank" colspan="3"></td></tr>';
+    	liArray.push(liValue);
+    });
 }
 
 controllers.page_order_location = {
 
     pageshow : function(event){	
-		$.mobile.loading( "show", {
-			text: '正在获取物流信息',
-			textVisible: true,
-			theme: "b",
-			textonly: false,
-			html: $this.jqmData( "html" ) || ""
-		});
-		$.getJSON(baseUrl + "getOrderDelivery?&callbak=?", {"orderId":utils.getParam('orderId')}, function(json){
-			$.mobile.loading( "hide" );
-			var stateCode = json.stateCode;
-			if (stateCode == 0){
-			  toastr.error("没有物流信息，" + json.message);
-			} else {
-				showMap(json.content);
-			}
-		});
-		
-		function showMap(delivery) {
+		var longitude = utils.getParam('orderLongitude');
+		var latitude = utils.getParam('orderLatitude');
+		if (!longitude || !latitude) {
+			showMap(longitude, latitude, true);
+		} else {
+			toastr.info("此订单暂无物流信息！");
+			showMap(115.89, 28.68, false);
+		}
+		function showMap(longitude, latitude, showIcon) {
 			var map = new BMap.Map("div_order_location");//在百度地图容器中创建一个地图
-			var point = new BMap.Point(delivery.longitude, delivery.latitude);      
-			map.centerAndZoom(point, 15);
+			var point = new BMap.Point(longitude, latitude);      
+			map.centerAndZoom(point, 12);
 			map.enableScrollWheelZoom();
 			map.addControl(new BMap.NavigationControl());  
 			map.addControl(new BMap.ScaleControl());  
 			map.addControl(new BMap.OverviewMapControl());
 			
-			var myIcon = new BMap.Icon("http://api.map.baidu.com/mapCard/img/location.gif",   
-			new BMap.Size(14, 23), {      
-				// 指定定位位置,当标注显示在地图上时，其所指向的地理位置距离图标左上角各偏移7像素和25像素。您可以看到在本例中该位置即是图标中央下端的尖角位置。      
-				anchor: new BMap.Size(7, 25),      
-			});        
-			// 创建标注对象并添加到地图     
-			var marker = new BMap.Marker(point, {icon: myIcon});      
-			map.addOverlay(marker);  
+			if (showIcon) {
+				var myIcon = new BMap.Icon("http://api.map.baidu.com/mapCard/img/location.gif",   
+				new BMap.Size(14, 23), {      
+					// 指定定位位置,当标注显示在地图上时，其所指向的地理位置距离图标左上角各偏移7像素和25像素。您可以看到在本例中该位置即是图标中央下端的尖角位置。      
+					anchor: new BMap.Size(7, 25),      
+				});        
+				// 创建标注对象并添加到地图     
+				var marker = new BMap.Marker(point, {icon: myIcon});      
+				map.addOverlay(marker); 
+			} 
 		}
     }
 }
 
+controllers.page_setting = {
+
+    pagecreate : function(event){
+		var $listview = $('#page_setting').find('ul[data-role="listview"]');
+		//防止重复绑定
+		$listview.undelegate();
+		$listview.delegate('#btn_setting_logout', 'click', function(e){
+			utils.removeStorageParam('infoUserId');
+			utils.removeStorageParam('infoRoleCode');
+			utils.removeStorageParam('infoUsername');
+			utils.removeStorageParam('infoPassword');
+			utils.removeStorageParam('infoMobile');
+			utils.removeStorageParam('infoEmail');
+			utils.removeStorageParam('infoRealName');
+			utils.removeStorageParam('infoAutoLogin');
+			$.mobile.changePage( "login.html", { transition: "turn"});
+		});
+    }
+}
+
 var pages = [
-	{id:'page_loading', event:'pagecreate'},
+	{id:'page_login', event:'pagecreate'},
 	{id:'btn_login', event:'click'},
 	{id:'page_clients', event:'pagebeforecreate,pageshow'},
 	{id:'page_client_regist', event:'pageshow'},
 	{id:'btn_client_regist', event:'click'},
 	{id:'page_orders', event:'pagebeforecreate,pageshow'},
 	{id:'page_order_detail', event:'pageshow'},
-	{id:'page_order_location', event:'pageshow'}
+	{id:'page_order_location', event:'pageshow'},
+	{id:'page_setting', event:'pagecreate'}
 ];
 AppView.run(pages);

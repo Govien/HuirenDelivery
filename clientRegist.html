@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>汇仁物流-客户注册</title>
+</head>
+<body>
+	<div data-role="page" id="page_client_regist">
+    	<div data-role="header" data-position="fixed">
+            <a class="ui-btn ui-shadow ui-corner-all ui-icon-carat-l ui-btn-icon-notext ui-btn-inline" data-rel="back">客户列表</a>
+            <h1>客户账号注册</h1>
+        </div>
+        <div role="main" class="ui-content">
+            <div data-role="fieldcontain">
+                <label for="text_client_code">客户编号</label>
+                <input type="text" id="text_client_code" data-mini="true" disabled>
+            </div>
+            <div data-role="fieldcontain">
+                <label for="text_client_realName">客户姓名</label>
+                <input type="text" id="text_client_realName" data-mini="true" disabled>
+            </div>
+        	<form onSubmit="return false;">
+                <div data-role="fieldcontain">
+                    <label for="text_client_username">客户账号</label>
+                    <input type="text" id="text_client_username" data-mini="true" data-clear-btn="true" placeholder="请输入客户账号...">
+                </div>
+                <div data-role="fieldcontain">
+                    <label for="text_client_password">客户密码</label>
+                    <input type="password" id="text_client_password" data-mini="true" data-clear-btn="true" autocomplete="off" placeholder="请输入客户密码...">
+                </div>
+                <div data-role="fieldcontain">
+                    <label for="text_client_password">重复密码</label>
+                    <input type="password" id="text_client_password_confirm" data-mini="true" data-clear-btn="true" autocomplete="off" placeholder="请再次输入密码...">
+                </div>
+                <div style="text-align:center;">
+                    <input type="submit" id="btn_client_regist" data-inline="true" data-mini="true" value="注册">
+                    <input type="reset" data-inline="true" data-mini="true" value="重置">
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

@@ -6,13 +6,10 @@ div.xtab {
 	background: #E6EAE9;
 }
 
-a {
-	color: #c75f3e;
-}
-
-#mytable {
+table.xtab {
 	padding: 0;
 	margin: 0;
+	width:100%;
 }
 
 caption {

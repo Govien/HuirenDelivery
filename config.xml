@@ -14,7 +14,7 @@
 Goven
 </author>
 
-<content src="loading.html" />
+<content src="login.html" />
 <access origin="*" />
 <preference name="Fullscreen" value="true" />
 <preference name="WebViewBounce" value="true" />

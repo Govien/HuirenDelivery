@@ -20,35 +20,34 @@
 </head>  
 <body>
     <div data-role="page" id="page_order_detail">
-        <div data-role="header" data-position="fixed">
+        
+        <div data-role="header">
             <a class="ui-btn ui-shadow ui-corner-all ui-icon-carat-l ui-btn-icon-notext ui-btn-inline" data-rel="back">订单列表</a>
-            <h1>订单详情</h1>
-            <a href="orderLocation.html" class="ui-btn ui-shadow ui-corner-all ui-icon-location ui-btn-inline">GPS位置</a>
-        </div>
+        <h1>订单详情</h1>
+            <a href="orderLocation.html" data-transition="slidefade" class="ui-btn-right ui-btn ui-btn-inline ui-mini ui-shadow ui-corner-all ui-btn-icon-left ui-icon-location">GPS位置</a>
+		</div>
         <div role="main" class="ui-content">
-            <table id="mytable"  cellspacing="0" summary="The technical specifications of the Apple PowerMac G5 series">
+            <table id="table_order_detail" class="xtab" cellspacing="0">
     <caption>订单详情数据</caption>
-              <tr>
-                <th width="20%">名称</th>
-                <th width="30%">值</th>
-                <th width="20%">名称</th>
-                <th width="30%">值</th>
+    		  <tr>
+                <th class="blank"></th>
+                <td class="blank" colspan="3"></td>
               </tr>
               <tr>
-                <th class="spec">单据编号</th>
-                <td id="td_order_code">900</td>
-                <th class="spec">订单类型</th>
-                <td id="td_order_type">5111</td>
+                <th class="specalt" width="20%">单据编号</th>
+                <td id="td_order_code" class="alt" width="30%">900</td>
+                <th class="specalt" width="20%">订单类型</th>
+                <td id="td_order_type" class="alt" width="30%">5111</td>
               </tr>
               <tr>
-                <th class="spec">开票状态</th>
-                <td id="td_order_ticketStatus">5111</td>
-                <th class="spec">订单状态</th>
-                <td id="td_order_status">5111</td>
+                <th class="specalt">开票状态</th>
+                <td id="td_order_ticketStatus" class="alt">5111</td>
+                <th class="specalt">订单状态</th>
+                <td id="td_order_status" class="alt">5111</td>
               </tr>
               <tr>
-                <th class="spec">配送方式</th>
-                <td id="td_order_deliverWay" colspan="3">900</td>
+                <th class="specalt">配送方式</th>
+                <td id="td_order_deliverWay" class="alt" colspan="3">900</td>
               </tr>
               <tr>
                 <th class="blank"></th>
@@ -57,40 +56,24 @@
               <tr>
                 <th class="specalt">发票号</th>
                 <td id="td_order_ticketNo" class="alt">900</td>
-                <th class="specalt">网单号</th>
+                <th class="specalt">运单号</th>
                 <td id="td_order_agencyNo" class="alt">5111</td>
               </tr>
               <tr>
-                <th class="specalt">失效日期</th>
-                <td id="td_order_invalidate" class="alt" colspan="3">900</td>
+                <th class="specalt">创建时间</th>
+                <td id="td_order_createTime" class="alt" colspan="3">900</td>
+              </tr>
+              <tr>
+                <th class="specalt">物流位置</th>
+                <td id="td_order_addreess" class="alt" colspan="3">900</td>
               </tr>
               <tr>
                 <th class="blank"></th>
                 <td class="blank" colspan="3"></td>
               </tr>
               <tr>
-                <th class="specalt">物料名称</th>
-                <td id="td_order_materialName" class="alt" colspan="3">5111</td>
-              </tr>
-              <tr>
-                <th class="specalt">产地</th>
-                <td id="td_order_origin" class="alt" colspan="3">5111</td>
-              </tr>
-              <tr>
-                <th class="specalt">数量</th>
-                <td id="td_order_count" class="alt">115</td>
-                <th class="specalt">批号</th>
-                <td id="td_order_batchNo" class="alt">900</td>
-              </tr>
-              <tr>
-                <th class="specalt">单价</th>
-                <td id="td_order_price" class="alt">900元/盒</td>
-                <th class="specalt">总金额</th>
-                <td id="td_order_sum" class="alt">5111元</td>
-              </tr>
-              <tr>
-                <th class="specalt">规格型号</th>
-                <td id="td_order_normsType" class="alt" colspan="3">900</td>
+                <th class="blank"></th>
+                <td class="blank" colspan="3"></td>
               </tr>
             </table>
         </div>
