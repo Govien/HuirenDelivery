@@ -1,24 +1,12 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<widget xmlns = "http://www.w3.org/ns/widgets"
-    xmlns:gap = "http://phonegap.com/ns/1.0"
-    id        = "com.goven.HuirenDelivery"
-    version   = "1.0.0">
-
-<name>汇仁物流</name>
-
-<description>
-汇仁医药物流
-</description>
-
-<author href="https://example.com" email="you@example.com">
-Goven
-</author>
-
-<content src="login.html" />
-<access origin="*" />
-<preference name="Fullscreen" value="true" />
-<preference name="WebViewBounce" value="true" />
-
-<icon src="img/icon.png" />
-
+<?xml version='1.0' encoding='utf-8'?>
+<widget id="com.goven.huiren.delivery" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+    <name>汇仁物流</name>
+    <description>
+        汇仁医药物流
+    </description>
+    <author email="gxl3999@gmail.com" href="http://cordova.io">
+        Goven
+    </author>
+    <content src="login.html" />
+    <access origin="*" />
 </widget>

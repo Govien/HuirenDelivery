@@ -15,15 +15,15 @@ toastr.options = {
 
 controllers.page_login = {
 
-    pagecreate : function(event){
+    autoLogin : function(event){
 		//utils.checkLogin('orders.html');
 		var autoLogin = AppView.utils.getStorageParam('infoAutoLogin');
 		var username = AppView.utils.getStorageParam('infoUsername');
 		var password = AppView.utils.getStorageParam('infoPassword');
 		if(autoLogin && username) {
-			$("#text_username").val(username),
-		    $("#text_password").val(password),
-			$.mobile.loading( "show", {
+			$("#text_username").val(username);
+		    $("#text_password").val(password);
+			/**$.mobile.loading( "show", {
 				text: '正在自动登录...',
 				textVisible: true,
 				theme: "b",
@@ -48,9 +48,15 @@ controllers.page_login = {
 				  if (autoLogin == 'on') {
 					  utils.setStorageParam('infoAutoLogin', true);
 				  }
-				  $.mobile.changePage( "orders.html", { transition: "turn", changeHash: true });
+				  // 业务员
+				  if (user.roleCode == '200') {
+					$.mobile.changePage( "clients.html", { transition: "turn", changeHash: true });
+				  } else {
+					 utils.setParam('clientCode', user.username);
+					$.mobile.changePage( "orders.html", { transition: "turn", changeHash: true });
+				  }
 				}
-			});
+			});**/
 		}
     }
 }
@@ -81,7 +87,7 @@ controllers.btn_login = {
 				  toastr.success("登录成功！");
 				  var user = json.content;
 				  utils.setStorageParam('infoUserId', user.ID);
-				  utils.setStorageParam('infoRoleCode', user.roleCode);
+				  utils.setStorageParam('infoRoleCode', user.roleCode);// 200 业务员，300 客户
 				  utils.setStorageParam('infoUsername', user.username);
 				  utils.setStorageParam('infoPassword', password);
 				  utils.setStorageParam('infoMobile', user.mobile);
@@ -90,7 +96,13 @@ controllers.btn_login = {
 				  if (autoLogin == 'on') {
 					  utils.setStorageParam('infoAutoLogin', true);
 				  }
-				  $.mobile.changePage( "orders.html", { transition: "turn", changeHash: true });
+				  // 业务员
+				  if (user.roleCode == '200') {
+					$.mobile.changePage( "clients.html", { transition: "turn", changeHash: true });
+				  } else {
+					utils.setParam('clientCode', user.username);
+					$.mobile.changePage( "orders.html", { transition: "turn", changeHash: true });
+				  }
 				}
 			});
 		}        
@@ -100,15 +112,13 @@ controllers.btn_login = {
 // 构建客户列表模板
 function bulidClientsListView(liArray, clients) {
 	$.each(clients, function ( i, client ) {
-		var liValue;
+		var liValue = '<li><a href="orders.html" data-clientCode="' + client.code + '">' + client.realName + '<span style="padding-left:5px; font-size:12px; font-weight:500">';
 		if (client.isRegist) {
-			liValue = '<li>' + client.realName + '<span style="padding-left:5px; font-size:12px; font-weight:500">';
 			if (client.mobile) {
 				liValue = liValue + '<i class="fa fa-phone"></i>' + client.mobile;
 			}
-			liValue = liValue + '<br/>编号：'+ client.code +'</span><p class="ui-li-aside"><br/><strong>已注册</strong></p></li>';
+			liValue = liValue + '<br/>编号：'+ client.code +'</span></a><p class="ui-li-aside"><br/><strong>已注册</strong></p></li>';
 		} else {
-			liValue = '<li><a href="#">' + client.realName + '<span style="padding-left:5px; font-size:12px; font-weight:500">';
 			if (client.mobile) {
 				liValue = liValue + '<i class="fa fa-phone"></i>' + client.mobile;
 			}
@@ -122,17 +132,13 @@ controllers.page_clients = {
 	pagebeforecreate : function(event){
         //每次show之前，先看看分页信息
         var clients_curr_page_no = 1, clients_total_page_num = 0;
-        if (utils.getParam('clients_curr_page_no')) {
-            clients_curr_page_no = utils.getParam('clients_curr_page_no');
-        } else {
-            utils.setParam('clients_curr_page_no', clients_curr_page_no); 
-        }         
-        if (utils.getParam('clients_total_page_num')) {
-            clients_total_page_num = utils.getParam('clients_total_page_num');                           
-        } else {
-			utils.setParam('clients_total_page_num', clients_total_page_num);
-			//controllers.page_clients.pageshow();
-        }
+		var clientsToOrders = parseInt(utils.getParam('clientsToOrders'));
+		if (clientsToOrders) {
+			clients_curr_page_no = clientsToOrders;
+			utils.setParam('clientsToOrders', 0);
+		}
+		utils.setParam('clients_curr_page_no', clients_curr_page_no);
+		utils.setParam('clients_total_page_num', clients_total_page_num);
     },
     
     pageshow : function(event){     
@@ -154,7 +160,7 @@ controllers.page_clients = {
 			} else {
 				if (data.message) {
 					var size = parseInt(data.message);
-					clients_total_page_num = size%10 == 0 ? size/10 : (size/10 + 1);
+					clients_total_page_num =  Math.ceil(size/10);
 				} else {
 					clients_total_page_num = 1;
 				}
@@ -171,6 +177,7 @@ controllers.page_clients = {
 			$listview.listview('refresh')
 			$listview.undelegate();
 			$listview.delegate('li a', 'click', function(e) {
+			  utils.setParam('clientsToOrders', clients_curr_page_no);
 			  utils.setParam('clientId', $(this).jqmData("clientid"));
 			  utils.setParam('clientCode', $(this).jqmData("clientcode"));
 			  utils.setParam('clientRealName', $(this).jqmData("clientrealname"));
@@ -185,13 +192,13 @@ controllers.page_clients = {
 			//上一页
 				$('#clients_page_count').append('<a data-action_page_no="' + (clients_curr_page_no - 1).toString() + '" href="#page_clients" data-shadow="true" data-iconshadow="true" data-wrapperels="span" ' + 
 										'class="ui-btn ui-mini ui-btn-inline ui-btn-corner-all">' + 
-										'<span class="ui-btn-inner ui-btn-corner-all"><span class="ui-btn-text">上一页</span></span></a>');                    
+										'<span class="ui-btn-inner ui-btn-corner-all"><span class="ui-btn-text">上一页</span></span></a>');                
 			}
 			if(clients_curr_page_no < clients_total_page_num){
 				//下一页
 				$('#clients_page_count').append('<a data-action_page_no="' + (clients_curr_page_no + 1).toString() + '" href="#page_clients" data-shadow="true" data-iconshadow="true" data-wrapperels="span" ' + 
 											'class="ui-btn ui-mini ui-btn-inline ui-btn-corner-all">' + 
-											'<span class="ui-btn-inner ui-btn-corner-all"><span class="ui-btn-text">下一页</span></span></a>');   
+											'<span class="ui-btn-inner ui-btn-corner-all"><span class="ui-btn-text">下一页</span></span></a>');
 			}
 			$('#clients_page_count').append('&nbsp<span>页数   ' + clients_curr_page_no.toString() + ' / ' + clients_total_page_num.toString() + '<span>');
 			
@@ -213,6 +220,7 @@ controllers.page_client_regist = {
 	pageshow:function(event){
 		$("#text_client_code").val(utils.getParam('clientCode'));
 		$("#text_client_realName").val(utils.getParam('clientRealName'));
+		$("#text_client_username").val(utils.getParam('clientCode'));
 	}
 }
 
@@ -274,20 +282,21 @@ controllers.page_orders = {
 	pagebeforecreate : function(event){
         //每次show之前，先看看分页信息
         var orders_curr_page_no = 1, orders_total_page_num = 0;
-        if (utils.getParam('orders_curr_page_no')) {
-            orders_curr_page_no = utils.getParam('orders_curr_page_no');
-        } else {
-            utils.setParam('orders_curr_page_no', orders_curr_page_no); 
-        }         
-        if (utils.getParam('orders_total_page_num')) {
-            orders_total_page_num = utils.getParam('orders_total_page_num');                           
-        } else {
-			utils.setParam('orders_total_page_num', orders_total_page_num);
-			//controllers.page_orders.pageshow();
-        }
+		var ordersToOrderDetail = parseInt(utils.getParam('ordersToOrderDetail'));
+		if (ordersToOrderDetail) {
+			orders_curr_page_no = ordersToOrderDetail;
+			utils.setParam('ordersToOrderDetail', 0);
+		}
+		utils.setParam('orders_curr_page_no', orders_curr_page_no);
+		utils.setParam('orders_total_page_num', orders_total_page_num);
     },
     
     pageshow : function(event){
+        var roleCode = utils.getStorageParam('infoRoleCode');
+        if (roleCode == '300') {
+            $('#btn_orders_back').hide();
+			$('#div_orders_footer').hide();
+        }
 		var orders_curr_page_no = parseInt(utils.getParam('orders_curr_page_no'));
 		var orders_total_page_num = parseInt(utils.getParam('orders_total_page_num'));
 		$.mobile.loading( "show", {
@@ -297,7 +306,7 @@ controllers.page_orders = {
 			textonly: false,
 			html: ""
 		});
-		$.getJSON(baseUrl + "saleOrder!getOrdersOfUser?&callback=?", {"userId":utils.getStorageParam('infoUserId'), "pageIndex":orders_curr_page_no, "pageSize":10}, function(data) {
+		$.getJSON(baseUrl + "saleOrder!getOrdersOfUser?&callback=?", {"userId":utils.getParam('clientCode'), "pageIndex":orders_curr_page_no, "pageSize":10}, function(data) {
 			$.mobile.loading( "hide" );
 			var liArray = ['<li data-role="list-divider">订单列表</li>'];
 			var stateCode = data.stateCode;
@@ -310,7 +319,7 @@ controllers.page_orders = {
 			} else {
 				if (data.message) {
 					var size = parseInt(data.message);
-					orders_total_page_num = size%10 == 0 ? size/10 : (size/10 + 1);
+					orders_total_page_num = Math.ceil(size/10);
 				} else {
 					orders_total_page_num = 1;
 				}
@@ -327,6 +336,7 @@ controllers.page_orders = {
 			$listview.listview('refresh');
 			$listview.undelegate();
 			$listview.delegate('li a', 'click', function(e) {
+			  utils.setParam('ordersToOrderDetail', orders_curr_page_no);
 			  utils.setParam('orderCode', $(this).jqmData("ordercode"));
 			  utils.setParam('orderCreateTime', $(this).jqmData("ordercreatetime"));
 			  utils.setParam('orderType', $(this).jqmData("ordertype"));
@@ -360,7 +370,6 @@ controllers.page_orders = {
 			}
 			
 			$('#orders_page_count').append('&nbsp&nbsp<span>页数   ' + orders_curr_page_no.toString() + ' / ' + orders_total_page_num.toString() + '<span>');
-			
 			var pageView = $('#orders_page_count');
 			//防止重复绑定
 			pageView.undelegate();
@@ -394,7 +403,7 @@ controllers.page_order_detail = {
 			textonly: false,
 			html: ""
 		});
-		$.getJSON(baseUrl + "saleOrder!getOrderDetail?&callback=?", {"orderCode":'02695273'}, function(data){
+		$.getJSON(baseUrl + "saleOrder!getOrderDetail?&callback=?", {"orderCode":utils.getParam('orderCode')}, function(data){
 			$.mobile.loading( "hide" );
 			var stateCode = data.stateCode;
 			if (stateCode == 0){
@@ -488,7 +497,6 @@ controllers.page_setting = {
 }
 
 var pages = [
-	{id:'page_login', event:'pagecreate'},
 	{id:'btn_login', event:'click'},
 	{id:'page_clients', event:'pagebeforecreate,pageshow'},
 	{id:'page_client_regist', event:'pageshow'},
